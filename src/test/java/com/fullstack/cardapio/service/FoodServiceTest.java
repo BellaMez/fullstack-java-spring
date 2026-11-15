@@ -37,7 +37,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-01 - Consulta retorna lista vazia")
-    void ct01_consultaListaVazia() {
+    void consultaListaVazia() {
         when(repository.findAll()).thenReturn(List.of());
         List<Food> resultado = service.listar();
         assertAll("Lista vazia", () -> assertNotNull(resultado),
@@ -48,7 +48,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-02 - Consulta retorna um alimento")
-    void ct02_consultaUmAlimento() {
+    void consultaUmAlimento() {
         Food pizza = alimento("Pizza", 30);
         when(repository.findAll()).thenReturn(List.of(pizza));
         List<Food> resultado = service.listar();
@@ -60,7 +60,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-03 - Consulta retorna múltiplos alimentos")
-    void ct03_consultaMultiplosAlimentos() {
+    void consultaMultiplosAlimentos() {
         Food pizza = alimento("Pizza", 30);
         Food suco = alimento("Suco", 10);
         when(repository.findAll()).thenReturn(List.of(pizza, suco));
@@ -73,7 +73,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-04 - Cadastro válido encaminha dados corretos")
-    void ct04_cadastroValido() {
+    void cadastroValido() {
         Food entrada = alimento("Hambúrguer", 25);
         when(repository.save(entrada)).thenReturn(entrada);
         Food resultado = service.cadastrar(entrada);
@@ -87,7 +87,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-05 - Cadastro retorna identificador simulado")
-    void ct05_cadastroRetornaId() {
+    void cadastroRetornaId() {
         Food entrada = alimento("Pastel", 12);
         Food salvo = new Food(42L, "Pastel", "https://exemplo.com/imagem.jpg", 12);
         when(repository.save(entrada)).thenReturn(salvo);
@@ -100,7 +100,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-06 - Cadastro preserva preço e caracteres acentuados")
-    void ct06_cadastroPreservaDados() {
+    void cadastroPreservaDados() {
         Food entrada = alimento("Pão de queijo", 10);
         when(repository.save(entrada)).thenReturn(entrada);
         Food resultado = service.cadastrar(entrada);
@@ -113,67 +113,67 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-07 - Rejeita alimento nulo")
-    void ct07_rejeitaAlimentoNulo() {
+    void rejeitaAlimentoNulo() {
         afirmarRejeicao(null, "Alimento não informado");
     }
 
     @Test
     @DisplayName("CT-08 - Rejeita nome nulo")
-    void ct08_rejeitaNomeNulo() {
+    void rejeitaNomeNulo() {
         afirmarRejeicao(alimento(null, 20), "Nome obrigatório");
     }
 
     @Test
     @DisplayName("CT-09 - Rejeita nome vazio")
-    void ct09_rejeitaNomeVazio() {
+    void rejeitaNomeVazio() {
         afirmarRejeicao(alimento("", 20), "Nome obrigatório");
     }
 
     @Test
     @DisplayName("CT-10 - Rejeita nome composto por espaços")
-    void ct10_rejeitaNomeSoEspacos() {
+    void rejeitaNomeSoEspacos() {
         afirmarRejeicao(alimento("   ", 20), "Nome obrigatório");
     }
 
     @Test
     @DisplayName("CT-11 - Rejeita preço nulo")
-    void ct11_rejeitaPrecoNulo() {
+    void rejeitaPrecoNulo() {
         afirmarRejeicao(new Food(null, "Coxinha", "https://exemplo.com/imagem.jpg", null), "Preço inválido");
     }
 
     @Test
     @DisplayName("CT-12 - Rejeita preço negativo")
-    void ct12_rejeitaPrecoNegativo() {
+    void rejeitaPrecoNegativo() {
         afirmarRejeicao(alimento("Pizza", -1), "Preço inválido");
     }
 
     @Test
     @DisplayName("CT-13 - Rejeita imagem nula")
-    void ct13_rejeitaImagemNula() {
+    void rejeitaImagemNula() {
         afirmarRejeicao(new Food(null, "Pizza", null, 30), "Imagem obrigatória");
     }
 
     @Test
     @DisplayName("CT-14 - Rejeita imagem com URL vazia")
-    void ct14_rejeitaImagemVazia() {
+    void rejeitaImagemVazia() {
         afirmarRejeicao(new Food(null, "Pizza", "", 30), "URL inválida");
     }
 
     @Test
     @DisplayName("CT-15 - Rejeita URL sem domínio")
-    void ct15_rejeitaUrlSemDominio() {
+    void rejeitaUrlSemDominio() {
         afirmarRejeicao(new Food(null, "Pizza", "https:///foto.jpg", 30), "URL inválida");
     }
 
     @Test
     @DisplayName("CT-16 - Rejeita protocolo não permitido")
-    void ct16_rejeitaProtocoloFtp() {
+    void rejeitaProtocoloFtp() {
         afirmarRejeicao(new Food(null, "Pizza", "ftp://exemplo.com/foto.jpg", 30), "URL inválida");
     }
 
     @Test
     @DisplayName("CT-17 - Propaga falha na consulta")
-    void ct17_trataErroConsulta() {
+    void trataErroConsulta() {
         when(repository.findAll()).thenThrow(new RuntimeException("Erro de conexão"));
         RuntimeException erro = assertThrows(RuntimeException.class, () -> service.listar());
         assertEquals("Erro de conexão", erro.getMessage());
@@ -182,7 +182,7 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-18 - Propaga falha no salvamento")
-    void ct18_trataErroCadastro() {
+    void trataErroCadastro() {
         Food entrada = alimento("Batata", 15);
         when(repository.save(entrada)).thenThrow(new RuntimeException("Falha ao salvar"));
         RuntimeException erro = assertThrows(RuntimeException.class, () -> service.cadastrar(entrada));
@@ -192,20 +192,21 @@ class FoodServiceTest {
 
     @Test
     @DisplayName("CT-19 - Rejeita URL com formato totalmente inválido para URI")
-    void ct19_rejeitaUrlComErroDeUri() {
+    void rejeitaUrlComErroDeUri() {
         Food entrada = new Food(null, "Pizza", "http://[invalid-ipv6", 30);
         afirmarRejeicao(entrada, "URL inválida");
     }
+
     @Test
     @DisplayName("CT-20 - Rejeita URL com esquema diferente de http ou https (ex: ftp)")
-    void ct20_rejeitaEsquemaInvalido() {
+    void rejeitaEsquemaInvalido() {
         Food entrada = new Food(null, "Pizza", "ftp://site.com/img.jpg", 30);
         afirmarRejeicao(entrada, "URL inválida");
     }
 
     @Test
     @DisplayName("CT-21 - Rejeita URL sem host válido")
-    void ct21_rejeitaUrlSemHost() {
+    void rejeitaUrlSemHost() {
         Food entrada = new Food(null, "Pizza", "http://", 30);
         afirmarRejeicao(entrada, "URL inválida");
     }

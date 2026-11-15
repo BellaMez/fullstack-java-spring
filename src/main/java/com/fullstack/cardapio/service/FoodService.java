@@ -39,17 +39,21 @@ public class FoodService {
         return repository.save(food);
     }
 
-private boolean isUrlValida(String url) {
-        if (url.isBlank()) { 
+public static boolean isUrlValida(String urlStr) {
+        if (urlStr == null || urlStr.isBlank()) {
             return false;
         }
         try {
-            URI uri = URI.create(url);
-            String scheme = uri.getScheme();
-            String host = uri.getHost();
-            return (scheme != null && (scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")))
-                    && (host != null && !host.isBlank());
-        } catch (IllegalArgumentException e) { 
+            java.net.URI uri = java.net.URI.create(urlStr);
+            String esquema = uri.getScheme();
+            
+            // Valida se o esquema é estritamente http ou https e se possui host válido
+            boolean esquemaValido = "http".equalsIgnoreCase(esquema) || "https".equalsIgnoreCase(esquema);
+            boolean temHost = uri.getHost() != null && !uri.getHost().isBlank();
+            
+            return esquemaValido && temHost;
+        } catch (Exception e) {
+            // Se cair aqui, a string não é uma URI válida (ex: caracteres proibidos, espaços, etc.)
             return false;
         }
     }
