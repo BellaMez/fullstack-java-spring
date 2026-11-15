@@ -8,6 +8,7 @@ class CardapioApplicationTests {
 
 	@Test
 	void contextLoads() {
+        // Verifica se o contexto da aplicação Spring Boot carrega com sucesso
 	}
 
 }
